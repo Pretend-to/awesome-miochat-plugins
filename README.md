@@ -26,7 +26,7 @@ wget https://raw.githubusercontent.com/awesome-miochat-plugins/custom/main/draw.
 
 ### 项目级插件
 ```bash
-# 克隆并初始化插件
+# 克隆并初始化插件（示例：prodia插件）
 git clone https://github.com/Pretend-to/prodia-plugin.git ./plugins/prodia-plugin
 cd ./plugins/prodia-plugin && pnpm install
 
