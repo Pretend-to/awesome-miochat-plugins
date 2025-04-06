@@ -1,5 +1,3 @@
-# Awesome MioChat Plugins 🚀
-
 <div align="center">
   <img src=".github/logo.gif" alt="MioChat Plugins" >
   
