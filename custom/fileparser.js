@@ -256,7 +256,7 @@ export default class parseFile extends MioFunction {
             }
 
             const uploadData = await uploadResponse.json() // 解析上传响应为 JSON
-            const jobId = uploadData.job_id // 获取 job_id
+            const jobId = uploadData.id // 获取 job_id
 
             // 等待解析完成
             let statusResponse, statusData;
@@ -269,7 +269,7 @@ export default class parseFile extends MioFunction {
                 statusData = await statusResponse.json() // 解析状态响应为 JSON
                 await new Promise(resolve => setTimeout(resolve, 500)) // 等待 .5 秒
 
-            } while (statusData.status !== 'completed') // 循环直到状态为 completed
+            } while (statusData.status === 'PENDING') // 循环状态为 PENDING
 
             // 获取解析结果
             const resultResponse = await fetch(`${baseUrl}${resultPath.replace(':job_id', jobId)}`, { // 使用 job_id 替换路径中的 :job_id
