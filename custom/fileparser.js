@@ -1,6 +1,7 @@
 import { MioFunction } from '../../lib/functions.js'
-import FormData from 'form-data'
+import path from 'path'
 import fetch from 'node-fetch' // Import fetch for Node.js
+import FormData from 'form-data'
 
 const config = {
     glm_key: '', 
@@ -36,13 +37,6 @@ export default class parseFile extends MioFunction {
     async parseFile(e) {
         const { glm_key, llama_key } = config; // Use the config object for API keys
     
-        // Check if fileUrls is a non-empty array
-        if (!Array.isArray(fileUrls) || fileUrls.length === 0) {
-            return {
-                error: 'file_urls must be a non-empty array.'
-            };
-        }
-    
         // Check if API keys are present
         if (!glm_key && !llama_key) {
             return {
@@ -64,9 +58,9 @@ export default class parseFile extends MioFunction {
     
         // Call the appropriate parser function
         if (availableParser === 'glmPaser') {
-            await this.glmPaser(e); // Call the GLM parser function if available
+            return await this.glmPaser(e); // Call the GLM parser function if available
         } else {
-            await this.llamaPaser(e); // Call the Llama parser function if available
+            return await this.llamaPaser(e); // Call the Llama parser function if available
         }
     }
 
@@ -232,19 +226,28 @@ export default class parseFile extends MioFunction {
         const results = [];
 
         for (const fileUrl of fileUrls) {
-           // 先发送上传请求, 创建表单
-            const formData = new FormData()
-            formData.append('input_url', fileUrl) // 使用 fileUrl 作为文件路径
-            formData.append('fast_mode', fastMode ) // 硬编码为文件提取
-
-            // 发送上传请求
+            const fileResponse = await fetch(fileUrl);
+            if (!fileResponse.ok) {
+                throw new Error(`下载文件失败: ${fileResponse.status} ${fileResponse.statusText}`);
+            }
+        
+            const fileBuffer = await fileResponse.arrayBuffer();
+            const file = Buffer.from(fileBuffer);  // 确保是 Buffer
+        
+            const url = new URL(fileUrl);
+            const filename = path.basename(url.pathname);
+        
+            const formData = new FormData();
+            formData.append('fast_mode', String(fastMode)); // 将 fastMode 转换为字符串
+            formData.append('file', file, String(filename));
+        
             const uploadResponse = await fetch(`${baseUrl}${uploadPath}`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${apiKey}`, // 使用 API 密钥进行身份验证
+                    'Authorization': `Bearer ${apiKey}`,
                 },
-                body: formData, // 使用 FormData 作为请求体
-            })
+                body: formData,
+            });
 
             if (!uploadResponse.ok) {
                 console.error('上传失败:', uploadResponse.status, uploadResponse.statusText)
@@ -261,13 +264,13 @@ export default class parseFile extends MioFunction {
             // 等待解析完成
             let statusResponse, statusData;
             do {
+                await new Promise(resolve => setTimeout(resolve, 500)) // 等待 .5 秒
                 statusResponse = await fetch(`${baseUrl}${statusPath.replace(':job_id', jobId)}`, { // 使用 job_id 替换路径中的 :job_id
                     headers: {
                         'Authorization': `Bearer ${apiKey}`, // 使用 API 密钥进行身份验证
                     },
                 }) 
                 statusData = await statusResponse.json() // 解析状态响应为 JSON
-                await new Promise(resolve => setTimeout(resolve, 500)) // 等待 .5 秒
 
             } while (statusData.status === 'PENDING') // 循环状态为 PENDING
 
