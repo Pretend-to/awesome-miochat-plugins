@@ -19,7 +19,7 @@
 cd ./plugins/custom
 
 # 2. 下载插件（示例：draw插件）
-wget https://raw.githubusercontent.com/awesome-miochat-plugins/custom/main/draw.js
+wget https://raw.githubusercontent.com/Pretend-to/awesome-miochat-plugins/refs/heads/main/custom/draw.js
 
 # 3. 刷新浏览器即可生效 🎉
 ```
