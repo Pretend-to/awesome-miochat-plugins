@@ -39,16 +39,20 @@ pnpm run restart
 ## 🔌 精选插件库
 
 ### 核心扩展组件
-| 插件名称       | 功能描述                           | 维护者 | 项目地址 |
-|----------------|----------------------------------|--------|----------|
-| **Prodia-Plugin** | AI 图像/视频生成接口集成           | 官方   | [GitHub](https://github.com/Pretend-to/prodia-plugin) |
+
+| 插件名称 | 功能描述 | 开发者 | 项目地址 |
+|---|---|---|---|
+| **MCP-Plugin** | MCP 接口集成 | 官方 | [内置插件](https://github.com/Pretend-to/mio-chat-backend) |
+| **Web-Plugin** | 网页搜索，网页解析，发送请求等网络相关功能 | 官方 | [内置插件](https://github.com/Pretend-to/mio-chat-backend) |
+| **Prodia-Plugin** | AI 图像/视频生成接口集成 | 官方 | [GitHub](https://github.com/Pretend-to/prodia-plugin) |
 
 ### 即用型工具
-| 插件名称       | 功能亮点                          | 开发者 |
-|----------------|----------------------------------|--------|
-| **Draw**       | 集成 Stable Diffusion 绘图       | 官方   |
-| **Notebook**   | 生成可下载的 Jupyter Notebook    | 官方   |
-| **FileParser** | 支持多格式文件智能解析            | 官方   |
+
+| 插件名称 | 功能亮点 | 开发者 | 项目地址 |
+|---|---|---|---|
+| **Draw** | 集成 Stable Diffusion 与 土块 绘图 | 官方 | [GitHub](https://github.com/Pretend-to/awesome-miochat-plugins) |
+| **Notebook** | 生成可下载的 Jupyter Notebook | 官方 | [GitHub](https://github.com/Pretend-to/awesome-miochat-plugins) |
+| **FileParser** | 支持多格式文件智能解析 | 官方 | [GitHub](https://github.com/Pretend-to/awesome-miochat-plugins) |
 
 ---
 
