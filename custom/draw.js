@@ -1,5 +1,8 @@
-/* eslint-disable camelcase */
-import { MioFunction } from '../../lib/functions.js' // 导入MioFunction和Param类
+/*
+  本脚本使用了第三方服务来生成图片，因此需要在脚本中填写第三方服务的API密钥和绑定的QQ号码。
+  请注意保护API密钥和QQ号码，避免被他人使用。
+*/
+import { MioFunction } from '../../lib/function.js' // 导入MioFunction和Param类
 
 const thirdPartyApiKey = '' // 第三方服务的API密钥，已写死。请注意保护！
 const thirdPartyBindQQ = '' // 第三方服务绑定的QQ号码, 已写死.

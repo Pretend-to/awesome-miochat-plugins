@@ -1,4 +1,8 @@
-import { MioFunction } from '../../lib/functions.js'
+/* 
+    通过 智谱AI 或者 llamaCloud 提供的 API 进行文件解析，
+    支持解析多种文件格式，如 PDF、Word、Excel、PPT、Markdown、HTML、JSON、XML、YAML、CSV、TXT、图片、音频、视频、压缩包等。
+*/
+import { MioFunction } from '../../lib/function.js'
 import path from 'path'
 import fetch from 'node-fetch' // Import fetch for Node.js
 import FormData from 'form-data'

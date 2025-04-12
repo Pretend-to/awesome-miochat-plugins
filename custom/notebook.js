@@ -1,5 +1,8 @@
-/* eslint-disable camelcase */
-import { MioFunction } from '../../lib/functions.js'
+/*
+    一个工具，用于创建一个 Jupyter Notebook (.ipynb) 文件，
+    并指定标题和内容。
+*/
+import { MioFunction } from '../../lib/function.js'
 
 export default class CreateNotebook extends MioFunction {
   constructor() {
