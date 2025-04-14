@@ -30,6 +30,7 @@ cd ./plugins/custom
 
 # 2. 下载插件（示例：draw插件）
 wget https://raw.githubusercontent.com/Pretend-to/awesome-miochat-plugins/refs/heads/main/custom/draw.js
+# 总之下载到这个目录就行，wget，下载，复制粘贴，都行。一般需要往里填一些配置。
 
 # 3. 刷新浏览器即可生效 🎉
 ```
