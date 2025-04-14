@@ -11,6 +11,16 @@
 
 ---
 
+## 📚 简介
+MioChat Plugins 是一个专门为 MioChat 提供插件支持的仓库，旨在为用户提供丰富的功能扩展。
+
+### 🌟 特性
+- **轻量级 JS 插件**：直接嵌入到 [MioChat](https://github.com/Pretend-to/mio-chat-backend) 后端，无需额外部署
+- **项目级插件**：独立的项目，提供完整的功能
+- **开发者友好**：通过文档和示例，轻松上手
+- **不断更新**：定期添加新插件，保持功能的多样性
+
+---
 ## 🛠️ 快速安装指南
 
 ### 轻量级 JS 插件
@@ -50,9 +60,11 @@ pnpm run restart
 
 | 插件名称 | 功能亮点 | 开发者 | 项目地址 |
 |---|---|---|---|
+| **Exec** | 智能辅助管理员在终端执行命令 | 官方 | [内置插件](https://github.com/Pretend-to/mio-chat-backend) |
+| **Parser** | 解析 pdf,office 等多种文件格式 | 官方 | [内置插件](https://github.com/Pretend-to/mio-chat-backend) |
 | **Draw** | 集成 Stable Diffusion 与 土块 绘图 | 官方 | [GitHub](https://github.com/Pretend-to/awesome-miochat-plugins) |
 | **Notebook** | 生成可下载的 Jupyter Notebook | 官方 | [GitHub](https://github.com/Pretend-to/awesome-miochat-plugins) |
-| **FileParser** | 支持多格式文件智能解析 | 官方 | [GitHub](https://github.com/Pretend-to/awesome-miochat-plugins) |
+| **FileParser** | 基于第三方API，支持多格式文件智能解析(不推荐，优先使用内置插件) | 官方 | [GitHub](https://github.com/Pretend-to/awesome-miochat-plugins) |
 
 ---
 
