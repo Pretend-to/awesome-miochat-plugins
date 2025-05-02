@@ -7,7 +7,7 @@ import { MioFunction } from '../../lib/function.js' // 导入MioFunction和Param
 
 const thirdPartyApiKey = '' // 第三方服务的API密钥
 const thirdPartyBindQQ = '' // 第三方服务绑定的QQ号码
-const thirdPartyBaseUrl = 'https://proxy.krumio.com/earthk' // 第三方服务的基础URL，用于反代 http://datukuai.top:1450
+const thirdPartyBaseUrl = 'http://datukuai.top:1450' // 第三方服务的基础URL，用于反代 http://datukuai.top:1450
 
 export default class drawImage extends MioFunction { // 导出generateImage类，继承自MioFunction
   constructor() {
