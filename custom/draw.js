@@ -2,10 +2,12 @@
   本脚本使用了第三方服务来生成图片，因此需要在脚本中填写第三方服务的API密钥和绑定的QQ号码。
   请注意保护API密钥和QQ号码，避免被他人使用。
 */
+/* eslint-disable camelcase */
 import { MioFunction } from '../../lib/function.js' // 导入MioFunction和Param类
 
-const thirdPartyApiKey = '' // 第三方服务的API密钥，已写死。请注意保护！
-const thirdPartyBindQQ = '' // 第三方服务绑定的QQ号码, 已写死.
+const thirdPartyApiKey = '' // 第三方服务的API密钥
+const thirdPartyBindQQ = '' // 第三方服务绑定的QQ号码
+const thirdPartyBaseUrl = 'https://proxy.krumio.com/earthk' // 第三方服务的基础URL，用于反代 http://datukuai.top:1450
 
 export default class drawImage extends MioFunction { // 导出generateImage类，继承自MioFunction
   constructor() {
@@ -43,7 +45,7 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
       hr_scale: 1.3, // 高分辨率修复比例
       negative_prompt: 'modern, recent, old, oldest, cartoon, graphic, text, painting, crayon, graphite, abstract, glitch, deformed, mutated, ugly, disfigured, long body, lowres, bad anatomy, bad hands, missing fingers, extra fingers, extra digits, fewer digits, cropped, very displeasing, (worst quality, bad quality:1.2), sketch, jpeg artifacts, signature, watermark, username, (censored, bar_censor, mosaic_censor:1.2), simple background, conjoined, bad ai-generated' // 负面提示词
     }
-    this.thirdPartyBaseUrl = 'https://fast-dodo-45.deno.dev' // 第三方服务的基础URL
+    this.thirdPartyBaseUrl = thirdPartyBaseUrl // 第三方服务的基础URL，可自定义
 
     this.imageRequestCounts = new Map() // Map<IPAddress, { count: number, lastResetTime: number }>，存储每个IP的请求次数和上次重置时间
   }
@@ -130,17 +132,17 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
     }
   }
   async generateImageThirdParty(e) {
+    logger.info('开始生成第三方图像...'); // 添加开始日志
+
     // IP based rate limiting for third-party API
     if (!e.user.isAdmin) {
       const ipAddress = e.user.ip
       const now = Date.now()
       let userRequestData = this.imageRequestCounts.get(ipAddress)
-
       if (!userRequestData) {
         userRequestData = { count: 0, lastResetTime: now }
         this.imageRequestCounts.set(ipAddress, userRequestData)
       }
-
       const oneHour = 60 * 60 * 1000
       if (now - userRequestData.lastResetTime > oneHour) {
         // Reset the count if it's been more than an hour
@@ -148,7 +150,6 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
         userRequestData.lastResetTime = now
         logger.info(`IP ${ipAddress} 的第三方API请求计数已重置.`)
       }
-
       if (userRequestData.count >= 10) {
         logger.warn(`IP ${ipAddress} 达到每小时第三方API请求限制 (10次).`)
         return {
@@ -156,24 +157,27 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
           error: 'You have reached the limit of 10 images per hour for the third-party service. Please try again later.'
         }
       }
-
       userRequestData.count++
       this.imageRequestCounts.set(ipAddress, userRequestData)
       logger.info(`IP ${ipAddress} 本小时已对第三方API请求 ${userRequestData.count} 张图像.`)
     }
-
     const { orientation = 'vertical', prompt } = e.params // 从参数中获取方向和提示词
-    const baseUrl = this.thirdPartyBaseUrl // 第三方服务的基础URL
+    const baseUrl = thirdPartyBaseUrl // 第三方服务的基础URL
     const apikey = thirdPartyApiKey // 第三方服务的API密钥, *已写死!*
     const bindQQ = thirdPartyBindQQ // 第三方服务绑定的QQ号码, *已写死!*
     const apiUrl = '/ht2.php?qq=' + bindQQ // 第三方服务的API接口URL
     const url = e.user.origin // 用户来源URL
     const recsCheckUrl = '/qx2.php?tk=' + apikey + '&qq=' + bindQQ // 用于检查剩余请求次数的URL
     let recsResponse // 声明用于存储检查请求次数响应的变量
+
+    logger.info('开始检查剩余第三方API调用次数...') // 记录信息
     try {
+      const recsStartTime = Date.now();  // 记录开始时间
       logger.info('检查剩余第三方API调用次数...') // 记录信息
       recsResponse = await fetch(baseUrl + recsCheckUrl) // 发起请求检查剩余次数
       logger.debug(`第三方剩余次数检查响应: ${recsResponse.status} ${recsResponse.statusText}`) // 记录debug信息
+      const recsEndTime = Date.now();  // 记录结束时间
+      logger.info(`检查剩余第三方API调用次数完成，耗时: ${recsEndTime - recsStartTime}ms`);  // 记录耗时
     } catch (error) {
       console.error(`请求剩余次数时发生错误: ${error.message}`) // 记录错误信息
       return {
@@ -181,6 +185,7 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
         error: '请求系统状态时发生错误，请稍后再试。' // 返回错误信息
       }
     }
+
     const recsData = await recsResponse.json() // 解析响应的JSON数据
     logger.json(recsData)
     logger.info(`剩余第三方API调用次数: ${recsData.recs}`) // 记录剩余次数
@@ -191,6 +196,7 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
         error: 'The system is currently unable to process the request, please try again later.' // 返回错误信息
       }
     }
+
     let changdu, kuandu // 声明用于存储图像长度和宽度的变量
     if (orientation !== 'horizontal') { // 检查方向是否为横向
       changdu = 768 // 如果不是横向，则设置长度为768
@@ -215,12 +221,15 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
       negative_prompt: pc, // 负面提示词
       my: apikey // API密钥
     }
+
     const maxRetries = 3 // 最大重试次数
     const delayBetweenRetries = 2000 // 重试之间的延迟时间
     for (let attempt = 0; attempt < maxRetries; attempt++) { // 循环重试
+      let response; // 声明 response 变量
       try {
+        const apiStartTime = Date.now();  // 记录API请求开始时间
         logger.info(`尝试 ${attempt + 1}: 调用第三方API...`) // 记录信息
-        const response = await fetch(baseUrl + apiUrl, { // 发起API请求
+        response = await fetch(baseUrl + apiUrl, { // 发起API请求
           method: 'POST', // 使用POST方法
           headers: {
             'Content-Type': 'application/json', // 设置请求头
@@ -228,6 +237,9 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
           },
           body: JSON.stringify(requestBody), // 将请求主体JSON序列化
         })
+        const apiEndTime = Date.now();  // 记录API请求结束时间
+        logger.info(`尝试 ${attempt + 1}: 第三方API请求完成，耗时: ${apiEndTime - apiStartTime}ms`);  // 记录耗时
+
         if (!response.ok) { // 检查响应是否成功
           console.error(`尝试 ${attempt + 1}: API请求失败: ${response.status} ${response.statusText}`) // 记录错误信息
           const errorText = await response.text() // 获取错误文本
@@ -241,11 +253,20 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
             }
           }
         } else {
+          const dataStartTime = Date.now();  // 记录JSON解析开始时间
           const data = await response.json() // 解析响应JSON
+          const dataEndTime = Date.now();  // 记录JSON解析结束时间
+          logger.info(`尝试 ${attempt + 1}: 第三方API响应解析JSON完成，耗时: ${dataEndTime - dataStartTime}ms`);  // 记录耗时
           logger.debug(`第三方API 响应状态: ${response.status}`) // 记录API响应状态, 不记录全部数据
           const imageBase64 = data.images[0] // 获取Base64编码的图像数据
+          const imageBufferStartTime = Date.now();  // 记录Buffer转换开始时间
           const imageBuffer = Buffer.from(imageBase64, 'base64') // 将Base64数据转换为Buffer
+          const imageBufferEndTime = Date.now();  // 记录Buffer转换结束时间
+          logger.info(`尝试 ${attempt + 1}: Base64转换为Buffer完成，耗时: ${imageBufferEndTime - imageBufferStartTime}ms`);  // 记录耗时
+          const imageUrlStartTime = Date.now();  // 记录获取图片URL开始时间
           const imageUrl = await this.getImgUrlFromBuffer(url, imageBuffer) // 使用父类方法获取图像URL
+          const imageUrlEndTime = Date.now();  // 记录获取图片URL结束时间
+          logger.info(`尝试 ${attempt + 1}: 获取图片URL完成，耗时: ${imageUrlEndTime - imageUrlStartTime}ms`);  // 记录耗时
           logger.info(`尝试 ${attempt + 1}: 第三方图像生成成功. URL: ${imageUrl}`) // 记录信息
           return {
             success: true,
@@ -261,6 +282,10 @@ export default class drawImage extends MioFunction { // 导出generateImage类�
             success: false,
             error: 'Service is busy, please try again later.', // 返回错误信息
           }
+        }
+      } finally {
+        if (response) {
+          logger.debug(`尝试 ${attempt + 1}: 响应状态: ${response.status}`); // 记录响应状态码
         }
       }
       await new Promise(resolve => setTimeout(resolve, delayBetweenRetries)) // 等待一段时间后重试
